@@ -18,7 +18,7 @@
         # 各状态文案；{n} 会被替换成正在运行的会话数
         textIdle: "小鲸鱼"
         textRunning: "正在回复"
-        textMulti: "正在回复 · {n}"
+        textMulti: "正在回复·{n}"
         # 工作时是否显示键盘小图标
         showKeyboardIcon: true
         # 是否允许拖动（拖过的位置记在浏览器本地）
