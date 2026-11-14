@@ -3,9 +3,9 @@
 DSH 悬浮小挂件：**头像 + 状态文字**，跟着会话运行状态自动切换。
 默认贴右上角，头像在上、灰色文字胶囊在下；可拖动、可右键改配置。
 
-> 同一套状态还可以驱动一个**桌面级悬浮窗**（DSH 窗口不在前台时浮现），那是可选的伴侣程序，
-> 本插件只负责「网页内那一层」。两者通过本机 beacon（127.0.0.1:48620）与
-> `~/.muse/dsh-status.json` 互通。
+> 同一套状态还可以驱动一个**桌面级悬浮窗**（DSH 窗口不在前台时浮现），那是可选的伴侣程序。
+> 网页层通过本机 beacon（127.0.0.1:48620）同步状态和桌面显示开关，桌面配置保存在
+> `~/.muse/dsh-typing-buddy.desktop.json`。
 
 ## 本地安装
 
@@ -39,6 +39,7 @@ DSH 悬浮小挂件：**头像 + 状态文字**，跟着会话运行状态自动
 | `avatar` | string | `""` | 头像：`https://…` 图片 URL，或本机绝对路径 `/Users/you/a.png`；空 = 内置头像 |
 | `size` | number | `40` | 头像直径（px），16–128 |
 | `pillPadding` | number | `8` | 状态文字胶囊内边距（px），2–24；水平内边距自动按 1.5 倍计算 |
+| `desktopEnabled` | boolean | `true` | 是否显示桌面悬浮层 |
 | `position` | string | `top-right` | `top-right` / `top-center` / `top-left` / `bottom-right` / `bottom-left` |
 | `offsetX` | number | `22` | 离边距（px） |
 | `offsetY` | number | `74` | 离边距（px） |
@@ -51,8 +52,8 @@ DSH 悬浮小挂件：**头像 + 状态文字**，跟着会话运行状态自动
 
 ## 右键面板（不改文件也能调）
 
-在挂件上**右键**，弹出小面板：头像 URL、头像尺寸、文字框内边距、位置、名称和三种状态文案，保存后写进
-`localStorage`（键 `dsh-typing-buddy.config`），优先于插件 config；
+在挂件上**右键**，弹出小面板：头像 URL、头像尺寸、文字框内边距、桌面悬浮层开关、位置、名称和三种状态文案，保存后写进
+`localStorage`（键 `dsh-typing-buddy.config`），并同步桌面悬浮层；本地覆盖优先于插件 config；
 「恢复默认」会清掉本地覆盖并刷新页面。
 
 ## 状态从哪来

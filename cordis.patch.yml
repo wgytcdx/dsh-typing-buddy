@@ -12,6 +12,7 @@
         size: 40
         # 状态文字胶囊内边距（px），控制文字边框大小
         pillPadding: 8
+        desktopEnabled: true
         # 位置：top-right | top-center | top-left | bottom-right | bottom-left
         position: top-right
         # 离边距离（px）

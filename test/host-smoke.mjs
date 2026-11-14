@@ -31,6 +31,7 @@ assert.equal(name, "dsh-typing-buddy");
 assert.deepEqual(inject, []);
 assert.equal(DEFAULTS.size, 40);
 assert.equal(DEFAULTS.pillPadding, 8);
+assert.equal(DEFAULTS.desktopEnabled, true);
 assert.deepEqual([...routes.keys()], [
   "/dsh-typing-buddy/config.json",
   "/dsh-typing-buddy/avatar",
