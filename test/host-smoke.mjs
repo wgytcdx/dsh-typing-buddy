@@ -6,7 +6,7 @@ import path from "node:path";
 const home = fs.mkdtempSync(path.join(os.tmpdir(), "dsh-typing-buddy-"));
 process.env.HOME = home;
 
-const { apply, inject, name } = await import("../lib/index.js");
+const { apply, inject, name, DEFAULTS } = await import("../lib/index.js");
 const routes = new Map();
 const listeners = new Map();
 const cleanups = [];
@@ -29,6 +29,8 @@ const ctx = {
 apply(ctx, {});
 assert.equal(name, "dsh-typing-buddy");
 assert.deepEqual(inject, []);
+assert.equal(DEFAULTS.size, 40);
+assert.equal(DEFAULTS.pillPadding, 8);
 assert.deepEqual([...routes.keys()], [
   "/dsh-typing-buddy/config.json",
   "/dsh-typing-buddy/avatar",

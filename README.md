@@ -37,7 +37,8 @@ DSH 悬浮小挂件：**头像 + 状态文字**，跟着会话运行状态自动
 | 键 | 类型 | 默认 | 说明 |
 |---|---|---|---|
 | `avatar` | string | `""` | 头像：`https://…` 图片 URL，或本机绝对路径 `/Users/you/a.png`；空 = 内置头像 |
-| `size` | number | `46` | 头像直径（px），16–128 |
+| `size` | number | `40` | 头像直径（px），16–128 |
+| `pillPadding` | number | `8` | 状态文字胶囊内边距（px），2–24；水平内边距自动按 1.5 倍计算 |
 | `position` | string | `top-right` | `top-right` / `top-center` / `top-left` / `bottom-right` / `bottom-left` |
 | `offsetX` | number | `22` | 离边距（px） |
 | `offsetY` | number | `74` | 离边距（px） |
@@ -50,7 +51,7 @@ DSH 悬浮小挂件：**头像 + 状态文字**，跟着会话运行状态自动
 
 ## 右键面板（不改文件也能调）
 
-在挂件上**右键**，弹出小面板：头像 URL、尺寸、位置、名称和三种状态文案，保存后写进
+在挂件上**右键**，弹出小面板：头像 URL、头像尺寸、文字框内边距、位置、名称和三种状态文案，保存后写进
 `localStorage`（键 `dsh-typing-buddy.config`），优先于插件 config；
 「恢复默认」会清掉本地覆盖并刷新页面。
 

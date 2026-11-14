@@ -9,7 +9,9 @@
         # 头像：图片 URL，或本机绝对路径（/Users/xxx/avatar.png）；留空用包内内置图
         avatar: ""
         # 头像直径（px）
-        size: 46
+        size: 40
+        # 状态文字胶囊内边距（px），控制文字边框大小
+        pillPadding: 8
         # 位置：top-right | top-center | top-left | bottom-right | bottom-left
         position: top-right
         # 离边距离（px）
