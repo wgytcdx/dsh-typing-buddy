@@ -1,0 +1,61 @@
+{
+  "name": "dsh-typing-buddy",
+  "version": "0.1.0",
+  "description": "DSH 悬浮小挂件：头像 + 状态文字，跟随会话运行状态自动切换，可自定义头像、文案、位置与尺寸",
+  "type": "module",
+  "main": "lib/index.js",
+  "icon": "./icon.svg",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wgytcdx/dsh-typing-buddy.git"
+  },
+  "homepage": "https://github.com/wgytcdx/dsh-typing-buddy#readme",
+  "bugs": {
+    "url": "https://github.com/wgytcdx/dsh-typing-buddy/issues"
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "widget",
+    "typing"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./lib/index.js": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "!lib/index.full.js.bak",
+    "assets",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "test"
+  ],
+  "scripts": {
+    "test": "node test/host-smoke.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    },
+    "manifestVersion": 1
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
