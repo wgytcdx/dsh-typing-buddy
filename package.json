@@ -1,6 +1,6 @@
 {
   "name": "dsh-typing-buddy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH 悬浮小挂件：头像 + 状态文字，跟随会话运行状态自动切换，可自定义头像、文案、位置与尺寸",
   "type": "module",
   "main": "lib/index.js",
