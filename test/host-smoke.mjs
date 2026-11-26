@@ -39,7 +39,7 @@ async function fixture(t, config = {}, options = {}) {
     effect(factory) { cleanups.push(factory()); },
   };
   options.setup?.(root, storageDir);
-  const plugin = apply(ctx, { storageDir, minStateDuration: 0, ...config });
+  const plugin = apply(ctx, { storageDir, minStateDuration: 0, randomWorkVisuals: false, ...config });
   const server = http.createServer((req, res) => {
     const pathname = new URL(req.url, "http://localhost").pathname;
     const spec = routes.get(pathname) || [...routes.values()].find((entry) => entry.kind === "prefix" && pathname.startsWith(entry.path));
@@ -114,7 +114,7 @@ test("missing host authentication fails closed", async (t) => {
 });
 
 test("status events write complete atomic desktop snapshots and bounded history", async (t) => {
-  const f = await fixture(t, {}, { initialAgents: [{ id: "existing", status: "running" }] });
+  const f = await fixture(t, { turnCelebration: false }, { initialAgents: [{ id: "existing", status: "running" }] });
   let status = await (await f.request(statusPath)).json();
   assert.deepEqual(status.ids, ["existing"]);
   f.listeners.get("api-session/status")("existing", false);

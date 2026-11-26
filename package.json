@@ -1,7 +1,7 @@
 {
   "name": "dsh-typing-buddy",
   "version": "0.2.0",
-  "description": "DSH Muse 式动态头像：八态活动联动、视频与深色资产、形象预览激活、可选 Agnes 生成管线",
+  "description": "DSH 界面悬浮头像，跟随会话和工具活动，支持静音视频、外观设置和形象预览激活",
   "type": "module",
   "main": "lib/index.js",
   "icon": "./icon.svg",
@@ -39,6 +39,7 @@
     "scripts",
     "docs",
     "icon.svg",
+    "screenshots.json",
     "cordis.patch.yml",
     "README.md",
     "LICENSE",

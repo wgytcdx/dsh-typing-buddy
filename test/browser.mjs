@@ -32,8 +32,7 @@ let activePack = structuredClone(initialPack);
 let candidates = [];
 let activations = 0;
 let configOverrides = {};
-let generationInfo = { available: false, models: {}, jobs: [] };
-const generationCalls = [];
+let formState = {};
 const requests = [];
 const history = [];
 let status;
@@ -103,6 +102,11 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === `${base}/config.json`) return json(res, { name: '测试小鲸鱼', beacon: false, size: 110, theme: 'auto', respectReducedMotion: true, ...configOverrides });
     if (url.pathname === `${base}/status.json`) return json(res, status);
     if (url.pathname === `${base}/asset-pack.json`) return json(res, activePack);
+    if (url.pathname === `${base}/form-state.json`) return json(res, formState);
+    if (url.pathname === `${base}/form-state` && req.method === 'POST') {
+      formState = { ...formState, ...await body(req) };
+      return json(res, formState);
+    }
     if (url.pathname === `${base}/packs` && req.method === 'GET') return json(res, { active: activePack, candidates });
     if (url.pathname === `${base}/packs/preview` && req.method === 'POST') {
       const input = await body(req);
@@ -129,12 +133,6 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(match ? 206 : 200, { 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', 'Content-Length': end - start + 1,
         ...(match ? { 'Content-Range': `bytes ${start}-${end}/${video.length}` } : {}) });
       return res.end(video.subarray(start, end + 1));
-    }
-    if (url.pathname === `${base}/generation.json`) return json(res, generationInfo);
-    if (url.pathname === `${base}/generation` && req.method === 'POST') {
-      const input = await body(req);
-      generationCalls.push(input);
-      return json(res, { job: { id: `mock-job-${generationCalls.length}`, status: 'queued', ...input } });
     }
     return json(res, { error: 'fixture route not found' }, 404);
   } catch (error) { return json(res, { error: error.message }, 500); }
@@ -222,7 +220,7 @@ try {
     await page.keyboard.press('Escape');
   });
 
-  await check('dark mode selects dark video, normal video really decodes and plays', async () => {
+  await check('dark mode changes the interface and keeps the same playable media', async () => {
     await publish('working');
     await page.waitForFunction(() => {
       const video = document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('.widget video.visible');
@@ -233,9 +231,10 @@ try {
     await page.waitForFunction(() => {
       const host = document.querySelector('#dsh-typing-buddy-host');
       const video = host?.shadowRoot.querySelector('.widget video.visible');
-      return host?.dataset.dark === 'true' && video?.src.endsWith('/dark.mp4') && !video.paused;
+      return host?.dataset.dark === 'true' && video?.src.endsWith('/light.mp4') && !video.paused;
     });
-    assert.equal(await mainImage.getAttribute('src'), `${imageURL}?dark`);
+    assert.equal(await mainImage.getAttribute('src'), imageURL);
+    assert.ok(!requests.some(item => item.path.endsWith('/dark.mp4')));
     await publish('waiting_for_subagents');
     await identity.click();
     await host.getByRole('tab', { name: '活动', exact: true }).click();
@@ -272,7 +271,7 @@ try {
     assert.equal(await host.locator('.candidates .pack-name img').count(), 0);
     await page.waitForFunction(() => {
       const video = document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('.candidates video.visible');
-      return video?.src.endsWith('/dark.mp4') && video.loop && !video.paused && video.readyState >= 2;
+      return video?.src.endsWith('/light.mp4') && video.loop && !video.paused && video.readyState >= 2;
     });
     await page.evaluate(() => {
       Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
@@ -301,7 +300,7 @@ try {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.waitForFunction(() => {
       const video = document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('.candidates video.visible');
-      return video?.src.endsWith('/dark.mp4') && !video.paused;
+      return video?.src.endsWith('/light.mp4') && !video.paused;
     });
     await page.evaluate(() => {
       window.__candidateVideos = [...document.querySelector('#dsh-typing-buddy-host').shadowRoot.querySelectorAll('.candidates video')];
@@ -309,10 +308,6 @@ try {
     await page.keyboard.press('Escape');
     assert.equal(await page.evaluate(() => window.__candidateVideos.length > 0
       && window.__candidateVideos.every(video => video.paused && !video.hasAttribute('src'))), true);
-    const generationPolls = requests.filter(item => item.path === `${base}/generation.json`).length;
-    await page.waitForTimeout(2600);
-    assert.equal(requests.filter(item => item.path === `${base}/generation.json`).length, generationPolls,
-      'closing the panel must stop generation polling');
     await identity.click();
     await host.getByRole('combobox', { name: '预览状态' }).waitFor();
     await host.getByRole('combobox', { name: '预览状态' }).selectOption('dancing');
@@ -328,7 +323,7 @@ try {
     await page.keyboard.press('Escape');
   });
 
-  await check('server default portrait and dark portrait override configured legacy avatar URLs', async () => {
+  await check('server default portrait overrides legacy avatar URLs in both themes', async () => {
     configOverrides = { avatarKind: 'url', avatarUrl: `${imageURL}?legacy-custom` };
     activePack = { id: 'default', name: '内置形象', portrait: `${imageURL}?default`, portrait_dark: `${imageURL}?default-dark`, states: {} };
     setStatus('idle');
@@ -343,7 +338,7 @@ try {
     await page.waitForFunction(expected => {
       const image = document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('.widget img');
       return image?.getAttribute('src') === expected && image.naturalWidth > 0;
-    }, `${imageURL}?default-dark`);
+    }, `${imageURL}?default`);
     assert.equal(await host.locator('.name').textContent(), '浏览器小鲸鱼');
     configOverrides = {};
     activePack = structuredClone(initialPack);
@@ -351,55 +346,27 @@ try {
     await page.waitForFunction(expected => document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('.widget img').getAttribute('src') === expected, imageURL);
   });
 
-  await check('enabled generation UI submits create, restyle, dark animation and retry to the local fixture', async () => {
-    generationInfo = {
-      available: true, models: { image: 'mock-image', video: 'mock-video' },
-      jobs: [
-        { id: 'running-smoke', mode: 'animate', status: 'running', progress: { completed: 2, total: 5 } },
-        { id: 'failed-smoke', mode: 'create', status: 'failed', error: 'mock transient failure', retryable: true },
-      ],
-    };
+  await check('asset import draft survives a fresh browser context without activating a pack', async () => {
     await identity.click();
     await host.getByRole('tab', { name: '形象', exact: true }).click();
-    await host.locator('[name=generation-mode]').waitFor();
-    await host.getByText('状态视频 · 生成中 · 2/5', { exact: true }).waitFor();
-    const reference = `${origin}${imageURL}`;
-    await host.locator('[name=generation-prompt]').fill('柔和光线的肖像');
-    await host.locator('[name=generation-reference]').fill(reference);
-    async function capture(action) {
-      const response = page.waitForResponse(value => value.url() === `${origin}${base}/generation` && value.request().method() === 'POST');
-      await action();
-      assert.equal((await response).status(), 200);
-      return generationCalls.at(-1);
-    }
-    assert.deepEqual(await capture(() => host.getByRole('button', { name: '生成候选（调用 Agnes）', exact: true }).click()), {
-      mode: 'create', prompt: '柔和光线的肖像', reference, count: 3, name: '浏览器小鲸鱼',
-    });
-    await host.locator('[name=generation-mode]').selectOption('restyle');
-    await host.locator('[name=generation-prompt]').fill('改成蓝色外套');
-    await host.locator('[name=generation-reference]').fill('');
-    assert.deepEqual(await capture(() => host.getByRole('button', { name: '生成候选（调用 Agnes）', exact: true }).click()), {
-      mode: 'restyle', prompt: '改成蓝色外套', candidateId: 'active', count: 1, name: '浏览器小鲸鱼',
-    });
-    await host.locator('[name=generation-dark]').check();
-    assert.deepEqual(await capture(() => host.getByRole('button', { name: '为已激活形象生成状态视频', exact: true }).click()), {
-      mode: 'animate', candidateId: 'active', dark: true,
-    });
-    await host.locator('[name=generation-dark]').uncheck();
-    assert.deepEqual(await capture(() => host.getByRole('button', { name: '为已激活形象生成状态视频', exact: true }).click()), {
-      mode: 'animate', candidateId: 'active', dark: false,
-    });
-    assert.deepEqual(await capture(() => host.getByRole('button', { name: '重试此任务', exact: true }).click()), { retryJobId: 'failed-smoke' });
-    const before = requests.filter(item => item.path === `${base}/packs`).length;
-    candidates = [{ id: 'generated-smoke', pack: { id: 'generated-smoke', name: '生成完成的候选', portrait: imageURL, states: {} } }];
-    generationInfo.jobs = [{ id: 'completed-smoke', mode: 'create', status: 'completed', progress: { completed: 1, total: 1 } }];
-    await host.locator('.candidates').getByText('生成完成的候选', { exact: true }).waitFor();
-    assert.ok(requests.filter(item => item.path === `${base}/packs`).length > before, 'completed jobs must refresh candidates');
-    assert.equal(activePack.id, 'smoke-active');
-    assert.equal(activations, 1, 'generated candidates require their own confirmation');
+    const draft = '{"portrait":';
+    const draftSaved = page.waitForResponse(value => value.url() === `${origin}${base}/form-state`
+      && value.request().method() === 'POST' && value.request().postDataJSON().importSource === draft);
+    await host.getByRole('textbox', { name: '资产包 JSON 或本机清单路径' }).fill(draft);
     await page.keyboard.press('Escape');
-    generationInfo = { available: false, models: {}, jobs: [] };
-    candidates = [];
+    assert.equal((await draftSaved).status(), 200);
+    const fresh = await browser.newContext();
+    try {
+      await fresh.route('http://127.0.0.1:48620/**', route => route.abort());
+      const reopened = await fresh.newPage();
+      await reopened.goto(origin);
+      await reopened.locator('.identity').click();
+      await reopened.getByRole('tab', { name: '形象', exact: true }).click();
+      await reopened.waitForFunction(value =>
+        document.querySelector('#dsh-typing-buddy-host')?.shadowRoot.querySelector('textarea')?.value === value, draft);
+      assert.equal(activePack.id, 'smoke-active');
+      assert.equal(activations, 1);
+    } finally { await fresh.close(); }
   });
 
   await check('drag moves and persists position without opening the panel', async () => {

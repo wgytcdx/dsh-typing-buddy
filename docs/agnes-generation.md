@@ -2,6 +2,8 @@
 
 默认关闭。宿主仅在 `generationEnabled: true` 且存在 API key 时启用服务；key 按 `AGNES_API_KEY`、`AGNES_API_TOKEN`、`APIHUB_AGNES_API_KEY` 顺序读取。公开配置、任务 snapshot 和错误消息均不含 key、原始文件路径或 provider 响应正文。
 
+当前形象面板提供资产导入、预览和激活。生成、换装和动画由已认证的 DSH owner 通过 API 调用。启用后，生成请求会把提示词和所选参考图发给 Agnes，可能消耗额度。
+
 ```js
 import { createGenerationService, GenerationError } from "../lib/generation.js";
 
@@ -40,7 +42,7 @@ const { id } = generation.start({
 
 `restyle` 默认一个候选；参考图可以显式传入，也可通过 `candidateId` 或当前激活头像取得。重绘提示词明确保持人物身份。生成候选的 provider 原图 URL 只写服务私有记录，不注入资产 manifest。本机头像只通过 `store.resolveMedia(publicRef)` 或兼容的 `store.media(id)` 能力读取并转换为 data URL，HTTP 本机媒体代理地址不会发送给 Agnes。
 
-`animate` 只接受已激活目标，`candidateId` 可以是对应生成候选 ID、当前 pack ID 或 `active`。对已激活的外部/内置包，服务复制受管清单、保留相同 pack ID 和原肖像，再把激活来源移到受管副本；外部原清单保持原样。每段视频都独立从同一主肖像开始：`idle`、`working`、`making_something`、`milestone_level_up`、`dancing` 共五段；`connecting` 复用 idle，`waiting_for_subagents` 复用 working，dances 列表复用 dancing。`generating` 只有静态 poster。可传 `dark: true` 额外生成五段深色主题视频，默认关闭。
+`animate` 只接受已激活目标，`candidateId` 可以是对应生成候选 ID、当前 pack ID 或 `active`。对已激活的外部/内置包，服务复制受管清单、保留相同 pack ID 和原肖像，再把激活来源移到受管副本；外部原清单保持原样。每段视频都独立从同一主肖像开始：`idle`、`working`、`making_something`、`milestone_level_up`、`dancing` 共五段；`connecting` 复用 idle，`waiting_for_subagents` 复用 working，dances 列表复用 dancing。`generating` 只有静态 poster。旧 API 仍接受 `dark: true`，会额外请求五段视频，当前挂件不播放这些额外视频。
 
 动画清单先原子写入 `pending: true`，每完成一个片段即原子更新，成功、失败或取消后恢复 `pending: false`。已完成视频始终保留。所有视频提示词明确锁定参考人物脸部、可见眼睛和嘴、白背景、居中头肩、固定镜头、静音、无文字覆盖，working 不额外添加耳机或笔记本。
 
@@ -80,4 +82,4 @@ API 请求使用以下固定形状：
 
 ## 验证范围
 
-运行 `node --test test/generation.test.mjs`。测试注入 mock fetch，覆盖请求形状、英文化、预览不激活、每状态相同参考图、别名、深色视频、持久化恢复、失败重试、超时、取消、受管清理、资源大小和缺 key。本次实现没有调用真实付费 API，测试结果不代表 Agnes 实网验证。未来进行真实验证时，按 agnes-ai-generation 技能使用其 Python helper。
+运行 `node --test test/generation.test.mjs`。测试注入 mock fetch，覆盖请求形状、英文化、预览不激活、每状态相同参考图、别名、旧深色视频参数、持久化恢复、失败重试、超时、取消、受管清理、资源大小和缺 key。测试不调用付费 API。

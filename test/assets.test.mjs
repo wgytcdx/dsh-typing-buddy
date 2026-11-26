@@ -42,23 +42,23 @@ test("default pack has all eight static fallbacks without invented videos", (t) 
     assert.equal(state.poster, active.portrait);
     assert.equal(state.video, undefined);
   }
-  assert.equal(active.portrait_dark, active.portrait);
+  assert.equal(active.portrait_dark, undefined);
   assert.deepEqual(active.dances, []);
   assert.deepEqual(candidates, []);
   assert.equal(pending, false);
   assert.ok(store.media(active.portrait.slice(MEDIA_PREFIX.length)));
 });
 
-test("preview is inert; activation and dark/video references survive restart", (t) => {
+test("preview is inert; playback assets survive activation and restart, legacy dark fields are ignored", (t) => {
   const { create, manifestPath, input } = fixture(t);
   const store = create();
   const preview = store.preview({ manifestPath });
   assert.equal(store.active.id, "default");
   assert.equal(store.snapshot().candidates[0].id, preview.id);
   assert.equal(preview.pack.states.idle.poster, preview.pack.portrait);
-  assert.notEqual(preview.pack.portrait_dark, preview.pack.portrait);
-  assert.equal(preview.pack.states.working.poster_dark, preview.pack.portrait_dark);
-  assert.notEqual(preview.pack.states.working.video_dark, preview.pack.states.working.video);
+  assert.equal(preview.pack.portrait_dark, undefined);
+  assert.equal(preview.pack.states.working.poster_dark, undefined);
+  assert.equal(preview.pack.states.working.video_dark, undefined);
   assert.equal(preview.pack.dances[0].video, preview.pack.states.working.video);
   assert.ok(!JSON.stringify(preview).includes(input));
   assert.equal(store.activate(preview.id).pack.id, "custom");
@@ -85,10 +85,10 @@ test("configured manifest rereads references, disappears, and restores automatic
   fs.unlinkSync(path.join(input, "work.mp4"));
   let result = store.refresh();
   assert.equal(result.active.id, "custom");
-  assert.equal(result.active.pending, true);
+  assert.equal(result.active.missingMedia, true);
   assert.equal(result.active.states.working.video, undefined);
   assert.equal(result.active.states.working.poster, result.active.portrait);
-  assert.equal(result.pending, true);
+  assert.equal(result.pending, false);
   assert.match(result.error, /missing media/);
   fs.writeFileSync(path.join(input, "work.mp4"), "recovered");
   assert.equal(store.refresh().active.id, "custom");
@@ -172,11 +172,11 @@ test("generation pending keeps the active portrait; missing portrait falls back 
 });
 
 test("HTTP(S) and allowed base64 media are accepted, missing local fields flag pending", () => {
-  const pack = normalizeAssetPack({ portrait: "https://example.test/avatar.jpg", portrait_dark: "data:image/png;base64,YQ==",
-    states: { working: { video: "http://example.test/work.mp4" } },
+  const pack = normalizeAssetPack({ portrait: "https://example.test/avatar.jpg",
+    states: { working: { video: "http://example.test/work.mp4", poster: "data:image/png;base64,YQ==" } },
   });
   assert.equal(pack.portrait, "https://example.test/avatar.jpg");
-  assert.equal(pack.portrait_dark, "data:image/png;base64,YQ==");
+  assert.equal(pack.states.working.poster, "data:image/png;base64,YQ==");
   assert.equal(pack.states.working.video, "http://example.test/work.mp4");
   assert.throws(() => normalizeAssetPack({ portrait: "https://user:pass@example.test/face.jpg" }), /credentials/);
   assert.equal(normalizeAssetPack({ portrait: "/missing/buddy/face.jpg" }).pending, true);
