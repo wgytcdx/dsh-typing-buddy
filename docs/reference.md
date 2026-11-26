@@ -27,18 +27,18 @@
   "name": "小鲸鱼 · 晨光",
   "portrait": "portrait.webp",
   "states": {
-    "idle": { "video": "idle.mp4" },
+    "idle": { "poster": "idle.webp" },
     "working": { "video": "working.mp4" },
-    "making_something": { "video": "making.mp4" },
+    "making_something": { "poster": "making.webp", "video": "making.mp4" },
     "waiting_for_subagents": { "video": "working.mp4" },
-    "connecting": { "video": "idle.mp4" },
+    "connecting": { "poster": "idle.webp" },
     "milestone_level_up": { "video": "celebrate.mp4" }
   },
   "dances": [{ "video": "dance.mp4" }]
 }
 ```
 
-每个状态支持 `video` 和 `poster`，缺少对应资源时使用主肖像。当前版本忽略旧清单中的 `*_dark` 媒体字段。`connecting` 和 `waiting_for_subagents` 可以复用 `idle` 和 `working` 的视频。外部程序可以用 `pending: true` 标记资产制作进度。插件会重新读取已激活的清单。
+在 `states` 中为每个活动状态配置 `poster`（静态图片）或 `video`（静音视频），两项也可以同时设置。视频不可播放时，DSH 界面显示该状态的图片。未设置状态图片时使用主头像 `portrait`。当前版本忽略旧清单中的 `*_dark` 媒体字段。`connecting` 和 `waiting_for_subagents` 可以在清单里引用和 `idle`、`working` 相同的视频。外部程序可以用 `pending: true` 标记资产制作进度。插件会重新读取已激活的清单。
 
 资产选择保存在 `~/.muse/dsh-typing-buddy/selection.json`。主肖像或清单暂时丢失时，保留选择并显示内置形象；原文件恢复后自动切回。仅视频缺失时保留选中主肖像。重建逻辑不会擅自重新发起收费 API 任务。
 

@@ -2,7 +2,7 @@
 
 [简体中文](README.md) · [Download v0.2.0](https://github.com/wgytcdx/dsh-typing-buddy/releases/tag/v0.2.0) · [MIT License](LICENSE)
 
-A floating avatar for the DeepSeek Harness web interface. It follows session, tool, and background activity and shows the current status below a customizable name. Click it for recent activity or right-click to open appearance settings.
+Inspired by the activity avatar in Muse, this floating avatar follows session, tool, and background activity in the DeepSeek Harness web interface. It displays the current status below its name. Click it for recent activity or right-click to open appearance settings.
 
 ![Activity avatar and recent activity panel in DSH](docs/market/activity.png)
 
@@ -35,8 +35,8 @@ To remove the plugin, use its Uninstall action in Desktop or run `dsh plugin --p
 ## Use
 
 - Click the avatar to open the Activity, Appearance, and Avatar tabs. Drag it to move it.
-- Change its name, size, caption padding, position, or theme in Appearance.
-- Import an asset pack in the Avatar tab, preview it, and confirm activation. The built-in portrait is static. Imported videos play muted when available and fall back to a portrait otherwise.
+- Set a custom avatar name and size in Appearance. You can also change caption padding, position, and theme.
+- Assign a still image or muted video to each activity state, such as thinking, creating, waiting, or completion. Import an [asset pack](docs/reference.md#资产包) in the Avatar tab, preview it, and confirm activation. If a video cannot play, the avatar shows the image for that state or the main portrait.
 - The optional Agnes API is disabled by default. Generation requests send the chosen prompt and reference to Agnes and may incur charges.
 
 ![Appearance settings in DSH](docs/market/appearance.png)
