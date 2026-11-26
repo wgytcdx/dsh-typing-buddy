@@ -2,5 +2,5 @@ url: https://github.com/wgytcdx/dsh-typing-buddy
 name: wgytcdx/dsh-typing-buddy
 category: ui
 description:
-  en: "Adds a floating avatar to the DSH web interface with session activity, muted video playback, and custom appearance settings."
-  zh: "在 DSH 界面显示悬浮头像，跟随会话活动切换状态，支持静音视频和外观设置。"
+  en: "DSH Activity Avatar shows session and tool activity in a floating avatar with muted video playback and appearance settings."
+  zh: "DSH 活动头像在界面上显示会话与工具状态，支持静音视频和外观设置。"

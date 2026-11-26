@@ -1,7 +1,7 @@
 {
   "name": "dsh-typing-buddy",
   "version": "0.2.0",
-  "description": "DSH 界面悬浮头像，跟随会话和工具活动，支持静音视频、外观设置和形象预览激活",
+  "description": "DSH 活动头像，显示会话与工具状态，支持静音视频、外观设置和形象预览",
   "type": "module",
   "main": "lib/index.js",
   "icon": "./icon.svg",
@@ -42,6 +42,7 @@
     "screenshots.json",
     "cordis.patch.yml",
     "README.md",
+    "README.en.md",
     "LICENSE",
     "test"
   ],
