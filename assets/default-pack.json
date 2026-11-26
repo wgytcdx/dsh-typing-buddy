@@ -1,0 +1,32 @@
+{
+  "id": "default",
+  "name": "小鲸鱼",
+  "portrait": "assets/avatar.jpg",
+  "states": {
+    "idle": {
+      "poster": "assets/avatar.jpg"
+    },
+    "working": {
+      "poster": "assets/avatar.jpg"
+    },
+    "making_something": {
+      "poster": "assets/avatar.jpg"
+    },
+    "waiting_for_subagents": {
+      "poster": "assets/avatar.jpg"
+    },
+    "connecting": {
+      "poster": "assets/avatar.jpg"
+    },
+    "milestone_level_up": {
+      "poster": "assets/avatar.jpg"
+    },
+    "dancing": {
+      "poster": "assets/avatar.jpg"
+    },
+    "generating": {
+      "poster": "assets/avatar.jpg"
+    }
+  },
+  "dances": []
+}

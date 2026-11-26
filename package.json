@@ -1,7 +1,7 @@
 {
   "name": "dsh-typing-buddy",
-  "version": "0.1.0",
-  "description": "DSH 悬浮小挂件：头像 + 状态文字，跟随会话运行状态自动切换，可自定义头像、文案、位置与尺寸",
+  "version": "0.2.0",
+  "description": "DSH Muse 式动态头像：八态活动联动、视频与深色资产、形象预览激活、可选 Agnes 生成管线",
   "type": "module",
   "main": "lib/index.js",
   "icon": "./icon.svg",
@@ -35,6 +35,9 @@
     "lib",
     "!lib/index.full.js.bak",
     "assets",
+    "src",
+    "scripts",
+    "docs",
     "icon.svg",
     "cordis.patch.yml",
     "README.md",
@@ -42,17 +45,28 @@
     "test"
   ],
   "scripts": {
-    "test": "node test/host-smoke.mjs"
+    "build": "node scripts/build.mjs",
+    "check": "node --check lib/index.js && node --check lib/client.js",
+    "test": "node --test test/*.test.mjs && node test/host-smoke.mjs",
+    "test:browser": "node test/browser.mjs"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
     "client": {
-      "inject": [],
+      "inject": [
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-api-gateway",
+        "@deepseek-ai/dsh-api-session-controller"
+      ],
       "platform": "web"
     },
     "manifestVersion": 1
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12",
+    "playwright": "^1.56.1"
   },
   "license": "MIT",
   "publishConfig": {

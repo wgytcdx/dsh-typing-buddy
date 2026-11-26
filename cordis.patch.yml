@@ -1,30 +1,29 @@
-# dsh-typing-buddy —— 挂载 + 默认配置
-#
-# 安装：dsh plugin --profile <profile> add link:/绝对路径   （或 link: 到本目录）
-# 改配置：直接改下面 config 里的值，宿主会热重载（不用重启）
+# dsh-typing-buddy — Muse 式动态头像
+# DSH「插件 → 添加插件 → 本地目录」选择本仓库；修改后重新加载组件。
 - insert:
     - id: typing-buddy
       name: dsh-typing-buddy
       config:
-        # 头像：图片 URL，或本机绝对路径（/Users/xxx/avatar.png）；留空用包内内置图
+        name: "小鲸鱼"
+        # 传统单图兼容：图片 URL / 本机绝对路径；空使用内置肖像。
         avatar: ""
-        # 头像直径（px）
-        size: 40
-        # 状态文字胶囊内边距（px），控制文字边框大小
-        pillPadding: 8
-        desktopEnabled: true
-        # 位置：top-right | top-center | top-left | bottom-right | bottom-left
+        # 本机资产包清单；相对媒体路径以清单所在目录解析。
+        assetPack: ""
+        size: 110
+        pillPadding: 6
         position: top-right
-        # 离边距离（px）
         offsetX: 22
         offsetY: 74
-        # 各状态文案；{n} 会被替换成正在运行的会话数
-        textIdle: "小鲸鱼"
-        textRunning: "正在回复"
-        textMulti: "正在回复·{n}"
-        # 工作时是否显示键盘小图标
-        showKeyboardIcon: true
-        # 是否允许拖动（拖过的位置记在浏览器本地）
+        idleLabel: ""
+        # 普通动画与文案的最短展示时长；断线/恢复立即切换。
+        minStateDuration: 1500
+        theme: auto
+        respectReducedMotion: true
         draggable: true
-        # 右下角窄屏（<640px）时自动改小
         compactOnNarrow: true
+        desktopEnabled: true
+        # 可选的现有桌面伴侣 beacon；不安装桌面伴侣时可关闭。
+        beacon: true
+        # 生成默认关闭。启用后密钥只从宿主进程的 AGNES_API_KEY 等环境变量读取。
+        # 候选生成、换装和视频生成均由形象面板中明确的操作触发。
+        generationEnabled: false
