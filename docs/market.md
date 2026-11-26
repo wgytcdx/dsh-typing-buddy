@@ -10,7 +10,7 @@
 | 分发 | 提交预构建的 `lib/client.js`。Git 安装固定 commit，压缩包安装使用 `npm pack --ignore-scripts`。两种方式都使用同一份运行代码 |
 | 运行环境 | DSH `0.2.1-rc.2` 和 Node.js 22 是实测版本，安装器按 `engines.dsh` 校验兼容范围 |
 | 权限和网络 | HTTP 路由沿用 DSH owner 认证，写入检查同源。用户指定的在线媒体由浏览器读取。可选 Agnes API 默认关闭，调用时发送生成输入和所选参考图。桌面伴侣同步只访问本机回环地址 |
-| 市场条目 | `ui` 分类，提供中英文功能描述和隔离 DSH 的外观截图。可选的独立桌面伴侣不属于该插件包 |
+| 市场条目 | `ui` 分类，提供中英文功能描述、DSH 活动状态和外观截图。独立桌面伴侣在 README 另行展示 |
 
 发布前在干净 checkout 运行 `npm ci`、`npm run build`、`npm run check`、`npm test` 和 `npm run test:browser`。构建后 `git diff --exit-code -- lib/client.js` 应通过。用 `npm pack --ignore-scripts` 生成包，并用独立 DSH Web profile 验证安装、首次加载与卸载。
 

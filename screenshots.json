@@ -1,4 +1,8 @@
 [
   "docs/market/activity.png",
+  "docs/market/state-idle.png",
+  "docs/market/state-making.png",
+  "docs/market/state-waiting.png",
+  "docs/market/state-done.png",
   "docs/market/appearance.png"
 ]
